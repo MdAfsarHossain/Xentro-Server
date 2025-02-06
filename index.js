@@ -110,3 +110,21 @@ app.get("/product/:id", async (req, res) => {
     res.status(404).json({ error: "Product not found" });
   }
 });
+
+// ALL POST requests
+// Add New Product
+app.post("/product", async (req, res) => {
+  const newProduct = req.body;
+  // console.log(newProduct);
+  const response = await axios.post(
+    "https://api.restful-api.dev/objects",
+    newProduct,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  res.status(201).json(response.data);
+});
