@@ -20,6 +20,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Get all users from API
 app.get("/users", async (req, res) => {
   const search = req?.query?.search;
   const city = req?.query?.city;
@@ -48,5 +49,19 @@ app.get("/users", async (req, res) => {
     res.send(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Get a single user from API
+app.get("/user/:id", async (req, res) => {
+  const userId = parseInt(req.params.id);
+  try {
+    const response = await fetch(
+      `https://jsonplaceholder.typicode.com/users/${userId}`
+    );
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    res.status(404).json({ error: "User not found" });
   }
 });
