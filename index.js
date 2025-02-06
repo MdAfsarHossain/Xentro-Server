@@ -96,3 +96,17 @@ app.get("/products", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Get a single product from API
+app.get("/product/:id", async (req, res) => {
+  const productId = parseInt(req.params.id);
+  try {
+    const response = await fetch(
+      `https://api.restful-api.dev/objects/${productId}`
+    );
+    const data = await response.json();
+    res.send(data);
+  } catch (error) {
+    res.status(404).json({ error: "Product not found" });
+  }
+});
