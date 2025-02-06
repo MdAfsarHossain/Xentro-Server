@@ -20,6 +20,18 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.b6ov8m0.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
 // Get all users from API
 app.get("/users", async (req, res) => {
   const search = req?.query?.search;
@@ -148,3 +160,45 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+
+    // await client.connect();
+    const db = client.db("xentro");
+    const productsCollection = db.collection("products");
+
+    // Get all products from the database
+    app.get("/my-products", async (req, res) => {
+      const search = req?.query?.search;
+
+      let query = {};
+
+      if (search) {
+        query = { name: { $regex: search, $options: "i" } };
+      }
+
+      const products = await productsCollection.find(query).toArray();
+      res.send(products);
+    });
+
+    // Add a new product to the database
+    app.post("/add-product", async (req, res) => {
+      const newProduct = req.body;
+      // console.log("New user: ", newProduct);
+      const result = await productsCollection.insertOne(newProduct);
+      res.send(result);
+    });
+
+    // Send a ping to confirm a successful connection
+    // await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+}
+run().catch(console.dir);
