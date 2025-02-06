@@ -128,3 +128,15 @@ app.post("/product", async (req, res) => {
 
   res.status(201).json(response.data);
 });
+
+// ALl DELETE Request
+// Delete a single product from the database
+app.delete("/product/:id", async (req, res) => {
+  const productId = parseInt(req.params.id);
+  // console.log(productId);
+  // const response = await axios.delete(
+  //   `https://api.restful-api.dev/objects/${productId}`
+  // );
+
+  res.status(200).json({ message: "Product deleted successfully" });
+});
