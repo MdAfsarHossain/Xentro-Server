@@ -65,3 +65,34 @@ app.get("/user/:id", async (req, res) => {
     res.status(404).json({ error: "User not found" });
   }
 });
+
+// Get all products from API
+app.get("/products", async (req, res) => {
+  const search = req?.query?.search;
+  const sort = req?.query?.sort;
+  // console.log(sort);
+
+  try {
+    const response = await fetch("https://api.restful-api.dev/objects");
+    const data = await response.json();
+    let result = data;
+
+    if (search) {
+      result = data?.filter((product) =>
+        product?.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    if (sort === "ASC" || sort === "DESC") {
+      result.sort((a, b) => {
+        const priceA = a?.data?.price || 0;
+        const priceB = b?.data?.price || 0;
+        return sort === "ASC" ? priceA - priceB : priceB - priceA;
+      });
+    }
+
+    res.send(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
