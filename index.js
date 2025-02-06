@@ -140,3 +140,11 @@ app.delete("/product/:id", async (req, res) => {
 
   res.status(200).json({ message: "Product deleted successfully" });
 });
+
+app.get("/", (req, res) => {
+  res.send("Welcome to the Xentro Tech Info Server!!");
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
